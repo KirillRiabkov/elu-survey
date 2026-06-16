@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELU Online Teaching Questionnaire</title>
+  <style>
+    :root {
+      --primary: #1a56a0;
+      --primary-light: #e8f0fb;
+      --accent: #2e86de;
+      --success: #27ae60;
+      --border: #d0d7e3;
+      --text: #1a202c;
+      --muted: #5a6a85;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(26,86,160,0.18);
+    }
+
+    header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 0.92rem;
+      opacity: 0.85;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    label .req { color: #e53e3e; margin-left: 2px; }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #fafbfd;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(46,134,222,0.15);
+      background: white;
+    }
+
+    /* Likert scale */
+    .likert-question {
+      margin-bottom: 22px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid #eef0f4;
+    }
+    .likert-question:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .q-text {
+      font-size: 0.93rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .q-num {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      border-radius: 50%;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .scale-options {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .scale-options label {
+      flex: 1;
+      cursor: pointer;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    .scale-options input[type="radio"] {
+      display: none;
+    }
+
+    .scale-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+      background: #fafbfd;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .scale-options input[type="radio"]:checked + .scale-btn {
+      border-color: var(--accent);
+      background: var(--primary-light);
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(46,134,222,0.18);
+    }
+
+    .scale-options label:hover .scale-btn {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .scale-options input[type="radio"]:checked + .scale-btn::after {
+      content: '';
+    }
+
+    /* Submit button */
+    .submit-wrap {
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    button[type="submit"] {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 14px rgba(26,86,160,0.25);
+    }
+
+    button[type="submit"]:hover { background: var(--accent); }
+    button[type="submit"]:active { transform: scale(0.98); }
+    button[type="submit"]:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Success state */
+    #success {
+      display: none;
+      text-align: center;
+      padding: 48px 32px;
+    }
+
+    #success .checkmark {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    #success h2 {
+      font-size: 1.4rem;
+      color: var(--success);
+      margin-bottom: 10px;
+    }
+
+    #success p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* Error message */
+    .error-msg {
+      display: none;
+      background: #fff5f5;
+      border: 1.5px solid #fc8181;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      color: #c53030;
+      margin-top: 12px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 20px; }
+      .card { padding: 18px; }
+      .scale-btn { height: 40px; font-size: 0.95rem; }
+      .scale-options { gap: 5px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>ELU Online Teaching Questionnaire</h1>
+    <p>Course: Advanced Business Statistics &nbsp;·&nbsp; Your responses are anonymous</p>
+  </header>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+  <form id="surveyForm">
+
+    <!-- SECTION 1: Demographics -->
+    <div class="card">
+      <div class="section-title">Personal Information</div>
+
+      <div class="field">
+        <label for="name">1. Student Name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+      </div>
+
+      <div class="field">
+        <label for="studentNo">2. Student Number <span class="req">*</span></label>
+        <input type="text" id="studentNo" name="studentNo" placeholder="e.g. 20230001" required />
+      </div>
+
+      <div class="field">
+        <label for="gender">3. Gender <span class="req">*</span></label>
+        <select id="gender" name="gender" required>
+          <option value="" disabled selected>Select…</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="faculty">4. Faculty / Department <span class="req">*</span></label>
+        <input type="text" id="faculty" name="faculty" placeholder="e.g. Faculty of Business" required />
+      </div>
+
+      <div class="field">
+        <label for="year">5. Year of Study <span class="req">*</span></label>
+        <select id="year" name="year" required>
+          <option value="" disabled selected>Select…</option>
+          <option>1st Year</option>
+          <option>2nd Year</option>
+          <option>3rd Year</option>
+          <option>4th Year</option>
+          <option>Postgraduate</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Likert questions -->
+    <div class="card">
+      <div class="section-title">Online Teaching Experience</div>
+
+      <!-- Q6 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">6</span>
+          How satisfied are you with online teaching overall?
+        </div>
+        <div class="scale-labels">
+          <span>Very dissatisfied</span>
+          <span>Very satisfied</span>
+        </div>
+        <div class="scale-options" data-q="q6">
+          <label><input type="radio" name="q6" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q6" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q6" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q6" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q6" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">7</span>
+          How easy is it to access online classes and materials?
+        </div>
+        <div class="scale-labels">
+          <span>Very difficult</span>
+          <span>Very easy</span>
+        </div>
+        <div class="scale-options" data-q="q7">
+          <label><input type="radio" name="q7" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q7" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q7" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q7" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q7" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">8</span>
+          The quality of internet connection is sufficient for online learning.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q8">
+          <label><input type="radio" name="q8" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q8" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q8" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q8" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q8" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">9</span>
+          Online classes are well organized.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q9">
+          <label><input type="radio" name="q9" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q9" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q9" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q9" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q9" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">10</span>
+          Instructors communicate clearly during online classes.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q10">
+          <label><input type="radio" name="q10" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q10" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q10" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q10" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q10" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">11</span>
+          I actively participate in online classes.
+        </div>
+        <div class="scale-labels">
+          <span>Never</span>
+          <span>Always</span>
+        </div>
+        <div class="scale-options" data-q="q11">
+          <label><input type="radio" name="q11" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q11" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q11" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q11" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q11" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">12</span>
+          Online teaching helps me achieve learning outcomes.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q12">
+          <label><input type="radio" name="q12" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q12" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q12" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q12" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q12" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">13</span>
+          Assessment methods used in online courses are fair.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q13">
+          <label><input type="radio" name="q13" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q13" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q13" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q13" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q13" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q14 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">14</span>
+          I am satisfied with the technical support provided by the university.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q14">
+          <label><input type="radio" name="q14" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q14" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q14" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q14" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q14" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="likert-question">
+        <div class="q-text">
+          <span class="q-num">15</span>
+          I would like online teaching to remain part of future courses.
+        </div>
+        <div class="scale-labels">
+          <span>Strongly disagree</span>
+          <span>Strongly agree</span>
+        </div>
+        <div class="scale-options" data-q="q15">
+          <label><input type="radio" name="q15" value="1" required /><div class="scale-btn">1</div></label>
+          <label><input type="radio" name="q15" value="2" /><div class="scale-btn">2</div></label>
+          <label><input type="radio" name="q15" value="3" /><div class="scale-btn">3</div></label>
+          <label><input type="radio" name="q15" value="4" /><div class="scale-btn">4</div></label>
+          <label><input type="radio" name="q15" value="5" /><div class="scale-btn">5</div></label>
+        </div>
+      </div>
+
+    </div><!-- /card -->
+
+    <div class="card submit-wrap">
+      <button type="submit" id="submitBtn">Submit Questionnaire</button>
+      <div class="error-msg" id="errorMsg">
+        ⚠️ Something went wrong. Please check your connection and try again.
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Success screen -->
+  <div id="success" class="card">
+    <div class="checkmark">✅</div>
+    <h2>Thank you!</h2>
+    <p>Your response has been recorded successfully.<br>You may close this page.</p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  // ⚠️ REPLACE THIS URL with your Google Apps Script Web App URL
+  const SHEET_URL = "https://script.google.com/macros/s/AKfycbzCqKQv4FkOzzUH3H2kSi0BcCWgrbq-Uhb-DGM-O_BDZ-yNN_QGzwkgZymRaecSivN6/exec";
+
+  // Progress bar: count answered radio groups
+  const radioGroups = ["q6","q7","q8","q9","q10","q11","q12","q13","q14","q15"];
+  const totalFields = 5 + radioGroups.length; // 5 text fields + 10 radio groups
+
+  function updateProgress() {
+    let filled = 0;
+    // text fields
+    ["name","studentNo","gender","faculty","year"].forEach(id => {
+      if (document.getElementById(id)?.value?.trim()) filled++;
+    });
+    // radio groups
+    radioGroups.forEach(name => {
+      if (document.querySelector(`input[name="${name}"]:checked`)) filled++;
+    });
+    document.getElementById("progress").style.width = (filled / totalFields * 100) + "%";
+  }
+
+  document.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("change", updateProgress);
+    el.addEventListener("input", updateProgress);
+  });
+
+  document.getElementById("surveyForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById("submitBtn");
+    const errMsg = document.getElementById("errorMsg");
+    errMsg.style.display = "none";
+
+    // Collect data
+    const data = {
+      name:      document.getElementById("name").value.trim(),
+      studentNo: document.getElementById("studentNo").value.trim(),
+      gender:    document.getElementById("gender").value,
+      faculty:   document.getElementById("faculty").value.trim(),
+      year:      document.getElementById("year").value,
+    };
+
+    radioGroups.forEach(q => {
+      const checked = document.querySelector(`input[name="${q}"]:checked`);
+      data[q] = checked ? checked.value : "";
+    });
+
+    btn.disabled = true;
+    btn.textContent = "Submitting…";
+
+    try {
+      await fetch(SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      // no-cors means we can't read the response — assume success
+      document.getElementById("surveyForm").style.display = "none";
+      document.querySelector(".progress-bar").style.display = "none";
+      document.getElementById("success").style.display = "block";
+
+    } catch (err) {
+      errMsg.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Submit Questionnaire";
+    }
+  });
+</script>
+</body>
+</html>
