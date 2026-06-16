@@ -613,19 +613,12 @@
       const params = new URLSearchParams(data);
       const url = SHEET_URL + "?" + params.toString();
 
-      // Use an image trick: no CORS, no preflight, works cross-origin
-      const img = new Image();
-      img.src = url;
+      // Single GET request via no-cors fetch — confirmed working
+      await fetch(url, { mode: "no-cors" });
 
-      // Also fire a standard fetch as backup (works if CORS headers present)
-      fetch(url, { mode: "no-cors" }).catch(() => {});
-
-      // Wait a moment then show success (Apps Script is fast)
-      setTimeout(() => {
-        document.getElementById("surveyForm").style.display = "none";
-        document.querySelector(".progress-bar").style.display = "none";
-        document.getElementById("success").style.display = "block";
-      }, 1500);
+      document.getElementById("surveyForm").style.display = "none";
+      document.querySelector(".progress-bar").style.display = "none";
+      document.getElementById("success").style.display = "block";
 
     } catch (err) {
       errMsg.style.display = "block";
